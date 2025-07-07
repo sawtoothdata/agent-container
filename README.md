@@ -15,16 +15,13 @@ A Docker-based development environment for running Claude Code CLI in an isolate
 ### 1. Prerequisites
 
 - Docker and Docker Compose installed
-- An Anthropic API key (optional - can use device flow authentication)
+- Claude Code uses device flow authentication (no API key required)
 
 ### 2. Clone and Setup
 
 ```bash
 git clone <repository-url>
 cd <repository-directory>
-
-# Create .env file (optional)
-echo "ANTHROPIC_API_KEY=your-api-key-here" > .env
 ```
 
 ### 3. Start the Container
@@ -97,16 +94,15 @@ claude chat --model claude-3-5-sonnet-20241022
 
 ## Configuration
 
-### Environment Variables
+### Authentication
 
-Create a `.env` file in the project root:
+Claude Code uses device flow authentication by default. If you need to use API keys:
 
-```env
-# Required for API key authentication (optional if using device flow)
-ANTHROPIC_API_KEY=your-api-key-here
-
-# Optional: For Kagi search integration
-KAGI_API_KEY=your-kagi-api-key
+```bash
+# Set environment variables before starting container
+export ANTHROPIC_API_KEY="your-api-key-here"
+export KAGI_API_KEY="your-kagi-api-key"  # Optional for search integration
+docker-compose up -d
 ```
 
 ### Resource Limits
@@ -202,13 +198,13 @@ See [PERMISSIONS.md](PERMISSIONS.md) for detailed information about the automati
 If Claude commands fail:
 1. Run `claude auth status` to check authentication
 2. Run `bash setup-claude.sh` to re-authenticate
-3. Ensure ANTHROPIC_API_KEY is set correctly in `.env`
+3. Use device flow authentication for best results
 
 ## Security Notes
 
 - The container runs with a non-root user (`agent`)
 - SSH is configured for local development only
-- API keys are stored securely in `.env` (gitignored)
+- Device flow authentication is recommended for security
 - Container has resource limits to prevent system overuse
 
 ## Contributing

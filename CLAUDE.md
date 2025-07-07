@@ -53,7 +53,7 @@ The container automatically detects and matches the host workspace directory own
 
 ## Development Workflow
 
-1. Ensure ANTHROPIC_API_KEY is set in `.env` or use device flow authentication
+1. Use device flow authentication (recommended) or set API keys in shell environment if needed
 2. Start container with `docker-compose up -d`
 3. SSH into container or use VS Code Remote SSH
 4. Run `setup-claude.sh` if first time setup
@@ -61,6 +61,6 @@ The container automatically detects and matches the host workspace directory own
 
 ## Configuration
 
-- **API Keys**: Set in `.env` file (ANTHROPIC_API_KEY, KAGI_API_KEY)
+- **Authentication**: Device flow authentication (recommended) or shell environment variables if needed
 - **Resource Limits**: Configured in docker-compose.yml (default: 4 CPUs, 8GB memory)
 - **MCP Servers**: Configured in `config/claude-code/config.json` for Kagi search integration

@@ -29,13 +29,12 @@ services:
       # Optional: Mount SSH keys for git operations
       - ~/.ssh:/home/agent/.ssh:ro
     
-    # Environment variables
+    # Environment variables (inherit from host)
     environment:
-      # Claude Code environment variables (optional - device flow login preferred)
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      
-      # Kagi search API key (optional)
-      - KAGI_API_KEY=${KAGI_API_KEY}
+      # Claude Code will use device flow authentication by default
+      # API keys can be set in host environment if needed:
+      # export ANTHROPIC_API_KEY="your-key"
+      # export KAGI_API_KEY="your-key"
     
     # Resource limits
     deploy:
