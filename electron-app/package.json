@@ -1,0 +1,59 @@
+{
+  "name": "claude-code-desktop",
+  "version": "1.0.0",
+  "description": "Desktop app for Claude Code with VS Code integration",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "npm run build:docker && electron-builder",
+    "build:docker": "node scripts/build-docker.js",
+    "pack": "electron-builder --dir",
+    "dist": "npm run build:docker && electron-builder --publish=never",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "Claude Code Desktop",
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "dockerode": "^4.0.0",
+    "node-ssh": "^13.1.0",
+    "ps-tree": "^1.2.0"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.claude.code.desktop",
+    "productName": "Claude Code Desktop",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "docker/**/*",
+      "node_modules/**/*"
+    ],
+    "extraFiles": [
+      {
+        "from": "docker/claude-code-image.tar",
+        "to": "docker/claude-code-image.tar"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
