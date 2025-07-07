@@ -1,79 +1,66 @@
 # Claude Code Docker Development Environment
 
-A Docker-based development environment for running Claude Code CLI in an isolated container with SSH access for remote development.
+Isolate your Claude Code development environment and tools from your host system using Docker. Connect VS Code remotely via SSH for a seamless development experience.
 
-## Features
+## Why Use This?
 
-- **Isolated Environment**: Run Claude Code in a secure Docker container
-- **SSH Access**: Connect via SSH for remote development
-- **Automatic Permission Handling**: Seamlessly handles file permissions between host and container
-- **Development Tools**: Pre-installed with essential development tools
-- **MCP Integration**: Configured for Model Context Protocol servers
+- **🔒 Complete Isolation**: Keep AI tools and dependencies separate from your main system
+- **🛡️ Security**: Prevent AI tools from accessing your entire filesystem
+- **🔧 Clean Environment**: No need to install Claude Code or dependencies on your host
+- **🚀 VS Code Integration**: Connect directly with VS Code Remote SSH
+- **⚡ Zero Permission Issues**: Automatic file permission handling between host and container
+- **🎯 Project Focus**: Each project gets its own isolated environment
 
-## Quick Start
+## VS Code Quickstart
 
-### 1. Prerequisites
-
-- Docker and Docker Compose installed
-- Claude Code uses device flow authentication (no API key required)
-
-### 2. Clone and Setup
+### 1. Build the Claude Code Image
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+# Clone this repo and build the image (one-time setup)
+git clone <repository-url> claude-code-env
+cd claude-code-env
+
+# Build the Docker image
+docker-compose build
 ```
 
-### 3. Start the Container
+### 2. Run from Your Project Directory
 
 ```bash
+# Copy the docker-compose.yml to your project root
+cp docker-compose.yml /path/to/your/project/
+cd /path/to/your/project/
+
+# Start the container (mounts current directory as workspace)
 docker-compose up -d
 ```
 
-### 4. Configure SSH Access
+### 3. Connect VS Code via SSH
 
-Add the following to your `~/.ssh/config` file:
+1. **Add SSH Config** - Add this to your `~/.ssh/config` file:
+   ```
+   Host claude-agent
+       HostName localhost
+       Port 2222
+       User agent
+       StrictHostKeyChecking no
+       UserKnownHostsFile /dev/null
+       LogLevel QUIET
+   ```
 
-```
-Host claude-agent
-    HostName localhost
-    Port 2222
-    User agent
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-    LogLevel QUIET
-```
+2. **Connect in VS Code**:
+   - Install the "Remote - SSH" extension
+   - Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+   - Type "Remote-SSH: Connect to Host"
+   - Select `claude-agent`
+   - Enter password: `agent`
 
-Now you can connect using:
-```bash
-ssh claude-agent
-```
+### 4. Setup Claude Code (first time only):
+   - Open VS Code terminal in the container
+   - Run: `bash setup-claude.sh`
+   - Follow the device flow authentication prompts
 
-Default password: `agent`
-
-### 5. Running Claude in Terminal
-
-Once connected via SSH:
-
-```bash
-# First-time setup (authenticates Claude)
-bash setup-claude.sh
-
-# Check authentication status
-claude auth status
-
-# Start Claude chat
-claude chat
-
-# Run Claude with a specific prompt
-claude "Your prompt here"
-
-# Use Claude with files
-claude "Analyze this code" file.py
-
-# Start an interactive session
-claude chat --model claude-3-5-sonnet-20241022
-```
+**Your project files** are in `/home/agent/workspace/` and automatically sync with your host directory.
 
 ## Directory Structure
 
@@ -99,8 +86,8 @@ claude chat --model claude-3-5-sonnet-20241022
 Claude Code uses device flow authentication by default. If you need to use API keys:
 
 ```bash
-# Set environment variables before starting container
-export ANTHROPIC_API_KEY="your-api-key-here"
+# Set environment variables before starting container or update in docker compose
+export ANTHROPIC_API_KEY="your-api-key-here" # Optional for pay as you go accounts
 export KAGI_API_KEY="your-kagi-api-key"  # Optional for search integration
 docker-compose up -d
 ```
@@ -115,27 +102,33 @@ Adjust in `docker-compose.yml`:
 
 Configure Model Context Protocol servers in `config/claude-code/config.json` for additional integrations.
 
-## Development Workflow
+## How It Works
 
-1. **VS Code Remote Development**:
-   ```bash
-   # Install Remote-SSH extension in VS Code
-   # Connect to: ssh://claude-agent
-   ```
+### Isolation Benefits
+- **Filesystem Isolation**: Only your project directory is mounted - Claude can't access your entire system
+- **Tool Isolation**: All AI tools, dependencies, and configurations stay in the container
+- **Network Isolation**: Container runs in isolated Docker network
+- **Resource Limits**: CPU and memory limits prevent resource exhaustion
 
-2. **Terminal Access**:
-   ```bash
-   # Direct SSH
-   ssh claude-agent
-   
-   # Docker exec
-   docker exec -it claude-agent-container bash
-   ```
+### File Synchronization
+- Your project files are mounted at `/home/agent/workspace/` in the container
+- Files created in VS Code (connected to container) appear instantly on your host
+- Automatic permission handling ensures no ownership issues
+- Work normally in VS Code - the isolation is transparent
 
-3. **File Management**:
-   - Work in `/home/agent/workspace` (mounted from host)
-   - Files created in container have correct host ownership
-   - No permission issues between host and container
+### Multiple Projects
+```bash
+# Build the image once (from claude-code-env directory)
+cd claude-code-env && docker-compose build
+
+# Copy docker-compose.yml to each project
+cp docker-compose.yml ~/project-a/
+cp docker-compose.yml ~/project-b/
+
+# Start containers from each project root
+cd ~/project-a && docker-compose up -d  # Mounts project-a files
+cd ~/project-b && docker-compose up -d  # Mounts project-b files (change port if running simultaneously)
+```
 
 ## Common Commands
 
@@ -200,12 +193,14 @@ If Claude commands fail:
 2. Run `bash setup-claude.sh` to re-authenticate
 3. Use device flow authentication for best results
 
-## Security Notes
+## Security & Isolation
 
-- The container runs with a non-root user (`agent`)
-- SSH is configured for local development only
-- Device flow authentication is recommended for security
-- Container has resource limits to prevent system overuse
+- **Non-root container user**: All processes run as `agent` user
+- **Limited filesystem access**: Only your project directory is accessible
+- **SSH localhost only**: SSH server only accepts local connections
+- **Device flow auth**: Secure authentication without storing API keys
+- **Resource limits**: Prevents container from consuming all system resources
+- **No host system access**: Claude and tools cannot access your host filesystem
 
 ## Contributing
 
