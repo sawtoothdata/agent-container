@@ -1,0 +1,58 @@
+services:
+  claude-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-agent-container
+    hostname: claude-agent
+    
+    # Port mappings
+    ports:
+      - "2222:2222"    # SSH for VSCode Remote
+    
+    # Volume mounts
+    volumes:
+      # Mount current directory as workspace
+      # Using :cached for better performance on macOS
+      - .:/home/agent/workspace:cached
+     
+      # VSCode configuration (uncomment and adjust paths as needed)
+      # Linux/WSL:
+      # - ~/.vscode:/home/agent/.vscode:ro
+      # - ~/.config/Code/User:/home/agent/.config/Code/User
+      # macOS:
+      # - ~/Library/Application Support/Code/User:/home/agent/.config/Code/User
+      # - ~/.vscode:/home/agent/.vscode:ro
+      # Windows (WSL path):
+      # - /mnt/c/Users/YOUR_USERNAME/AppData/Roaming/Code/User:/home/agent/.config/Code/User
+      
+      # Optional: Mount SSH keys for git operations
+      - ~/.ssh:/home/agent/.ssh:ro
+    
+    # Environment variables
+    environment:
+      # Claude Code environment variables (optional - device flow login preferred)
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      
+      # Kagi search API key (optional)
+      - KAGI_API_KEY=${KAGI_API_KEY}
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Network mode
+    network_mode: bridge

@@ -1,0 +1,10 @@
+# SSH configuration for Claude Agent Container
+# Add this to your ~/.ssh/config file
+
+Host claude-agent
+    HostName localhost
+    Port 2222
+    User agent
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    LogLevel QUIET

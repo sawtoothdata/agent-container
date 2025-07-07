@@ -1,0 +1,31 @@
+# Workspace directory (user code)
+workspace/
+
+# Configuration with potential secrets
+config/claude-code/config.json
+
+# Environment files
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# API keys and secrets
+*.key
+*.pem
+secrets/

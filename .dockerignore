@@ -1,0 +1,41 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+*.md
+LICENSE
+
+# Config files that will be mounted
+config/
+
+# SSH config example
+ssh_config_example
+
+# Docker files
+docker-compose.yml
+.dockerignore
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+
+# Node modules (if any)
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
